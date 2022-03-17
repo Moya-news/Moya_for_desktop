@@ -15,7 +15,6 @@ import {
   zoom,
 } from "d3";
 import React, { useEffect, useRef, useState } from "react";
-import calculateMovingAverageLine from "@utils/calculateMovingAverageLine";
 import useResizeObserver from "@utils/useResizeObserver";
 import { MainChartWrapper } from "./style";
 import useDebounce from "@utils/useDebounce";
@@ -106,10 +105,6 @@ const MainChart = ({
 
       xAxis.tickValues(ticks(newStart, newEnd, 7));
     }
-
-    movingAverageLines.forEach((ele) => {
-      calculateMovingAverageLine(data, ele);
-    });
 
     const movingAverageArea = svg.select(".movingaveragearea");
 
@@ -317,6 +312,30 @@ const MainChart = ({
         .classed("bars", true);
 
       candleSticksEnter
+        .append("path")
+        .attr("clip-path", "url(#clip)")
+        .classed("high-row", true)
+        .attr("d", (data) => {
+          return candleStickLineGenerator([
+            {
+              x: xScale(data.date) - xBandScale.bandwidth() / 2,
+              y: yPriceScale(data.high),
+            },
+            {
+              x: xScale(data.date) - xBandScale.bandwidth() / 2,
+              y: yPriceScale(data.low),
+            },
+          ]);
+        })
+        .attr("stroke", (d) => {
+          if (d.end >= d.start) {
+            return "#F5746B";
+          } else {
+            return "#065398";
+          }
+        });
+
+      candleSticksEnter
         .append("rect")
         .attr("clip-path", "url(#clip)")
         .attr("rx", 2)
@@ -342,30 +361,6 @@ const MainChart = ({
             return "blue";
           }
         });
-
-      candleSticksEnter
-        .append("path")
-        .attr("clip-path", "url(#clip)")
-        .classed("high-row", true)
-        .attr("d", (data) => {
-          return candleStickLineGenerator([
-            {
-              x: xScale(data.date) - xBandScale.bandwidth() / 2,
-              y: yPriceScale(data.high),
-            },
-            {
-              x: xScale(data.date) - xBandScale.bandwidth() / 2,
-              y: yPriceScale(data.low),
-            },
-          ]);
-        })
-        .attr("stroke", (d) => {
-          if (d.end >= d.start) {
-            return "#F5746B";
-          } else {
-            return "#065398";
-          }
-        });
     });
 
     const volumes = svg
@@ -386,7 +381,7 @@ const MainChart = ({
         .attr("width", () => xBandScale.bandwidth())
         .attr(
           "height",
-          (data) => yVolumeScale(data.volume) - yVolumeScale(yVolumeMax) + 10,
+          (data) => yVolumeScale(yVolumeMin) - yVolumeScale(yVolumeMax),
         );
 
       volumesEnter

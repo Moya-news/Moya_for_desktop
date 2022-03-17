@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useMemo } from "react";
 import { GraphWrapper } from "./style";
 import {
   reducer,
@@ -19,19 +19,25 @@ const DoFinancialGraph = () => {
   const { period, stockData } = domesticState;
   const { startDate, endDate, diff } = period;
 
+  const filteredStockData = useMemo(
+    () =>
+      stockData.filter((ele) => ele.date <= endDate && ele.date >= startDate),
+    [stockData],
+  );
+
   return (
     <GraphWrapper>
       {diff < 91 && startDate && endDate ? (
         <MainChart
           startDate={startDate}
           endDate={endDate}
-          stockData={stockData}
+          data={filteredStockData}
         />
       ) : (
         <MainAreaChart
           startDate={startDate}
           endDate={endDate}
-          stockData={stockData}
+          data={filteredStockData}
         />
       )}
     </GraphWrapper>

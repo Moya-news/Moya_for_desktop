@@ -26,6 +26,8 @@ const FinanceChart = ({
   marginRight = 40,
   padding = 40,
   bandPadding = 0.3,
+  dateFormat = "%Y. %m",
+  tooltip = false,
 }) => {
   const financeChartRef = useRef();
   const svgRef = useRef(null);
@@ -92,7 +94,7 @@ const FinanceChart = ({
           idx === 1
             ? select(node)
                 .select("text")
-                .text(() => timeFormat("%Y. %m")(new Date(data.date)))
+                .text(() => timeFormat(dateFormat)(new Date(data.date)))
                 .attr("transform", `translate(${marginLeft},0)`)
                 .classed("yAxisLabel", true)
             : select(node).select("text").remove();
@@ -154,32 +156,33 @@ const FinanceChart = ({
             return yScale(length - index) + yScale.bandwidth() / 2;
           });
       });
+    if (tooltip) {
+      const toolTip = svg
+        .select(".tooltip")
+        .selectAll(".tooltipg")
+        .data(data.values)
+        .join((enter) => {
+          const tooltipg = enter.append("g").classed("tooltipg", true);
 
-    const toolTip = svg
-      .select(".tooltip")
-      .selectAll(".tooltipg")
-      .data(data.values)
-      .join((enter) => {
-        const tooltipg = enter.append("g").classed("tooltipg", true);
+          const tooltipgele = tooltipg
+            .append("g")
+            .attr("transform", (value, index) => {
+              return `translate(${
+                width / 2 + xToolTipScale.bandwidth() * index - marginLeft * 2
+              },${marginBottom - 10})`;
+            });
 
-        const tooltipgele = tooltipg
-          .append("g")
-          .attr("transform", (value, index) => {
-            return `translate(${
-              width / 2 + xToolTipScale.bandwidth() * index - marginLeft * 2
-            },${marginBottom - 10})`;
-          });
+          tooltipgele
+            .append("circle")
+            .attr("class", (value, idx) => `${value.type} financerect${idx}`)
+            .attr("r", 3)
+            .attr("transform", `translate(${-marginLeft})`);
 
-        tooltipgele
-          .append("circle")
-          .attr("class", (value, idx) => `${value.type} financerect${idx}`)
-          .attr("r", 3)
-          .attr("transform", `translate(${-marginLeft})`);
-
-        tooltipgele
-          .append("text")
-          .text((value) => financialType.current[value.type]);
-      });
+          tooltipgele
+            .append("text")
+            .text((value) => financialType.current[value.type]);
+        });
+    }
   }, [data, resize]);
 
   return (

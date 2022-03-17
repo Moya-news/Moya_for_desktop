@@ -7,6 +7,7 @@ export const CardsWrapper = styled.div`
   justify-content: space-between;
 
   & .card {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     background: #ffffff;
     flex: 1 1 0;
     border-radius: 8px;

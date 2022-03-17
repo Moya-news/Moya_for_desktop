@@ -8,7 +8,16 @@ import boom_up from "@images/boom_up.svg";
 import boom_down from "@images/boom_down.svg";
 import { timeFormat } from "d3";
 
-const CardsList = ({ startDate, endDate }) => {
+const CardsList = ({
+  startDate,
+  numOfNews,
+  endDate,
+  highestDate,
+  lowestDate,
+  emotionRate,
+  emotionGap,
+  title,
+}) => {
   const periodStart = useMemo(
     () => timeFormat("%Y.%m.%d")(startDate),
     [startDate],
@@ -18,26 +27,30 @@ const CardsList = ({ startDate, endDate }) => {
     <CardsWrapper>
       <EmojiCard
         icon={icon_news}
-        title="Apple Inc 관련 뉴스 수집량"
+        title={`${title} 관련 뉴스 수집량`}
         description={`${periodStart}-${periodEnd} 기준`}
-        number="538"
+        number={numOfNews}
         unit="개"
       />
       <EmojiCard
         icon={boom_up}
-        title="KODEX 200선물인버스x 버즈량 전월대비"
+        title={`${title} 버즈량 전월대비`}
         description={`${periodStart}-${periodEnd} 기준`}
-        number="2.5%"
-        unit="하락"
+        number={`${emotionGap.value}%`}
+        unit={emotionGap.type === "positive" ? "상승" : "하락"}
       />
       <EmojiCard
-        icon={icon_positive}
-        title="KODEX 200선물인버스x "
+        icon={emotionRate.type === "positive" ? icon_positive : icon_negative}
+        title={`${title}`}
         description={`${periodStart}-${periodEnd} 기준`}
-        number="82.5%"
-        numberDes="긍정"
+        number={`${emotionRate.value}%`}
+        numberDes={emotionRate.type === "positive" ? "긍정" : "부정"}
       />
-      <Card description={`${periodStart}-${periodEnd} 기준`} />
+      <Card
+        description={`${periodStart}-${periodEnd} 기준`}
+        highestDate={highestDate}
+        lowestDate={lowestDate}
+      />
     </CardsWrapper>
   );
 };

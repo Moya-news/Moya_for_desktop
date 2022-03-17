@@ -11,9 +11,6 @@ const CategoryChart = ({
   data,
   width = 500,
   height = 300,
-  toolTipHeight = 100,
-  toolTipWidth = 100,
-  focusTooltipColor = "#eee",
   marginTop = 40,
   marginBottom = 40,
   marginLeft = 40,
@@ -25,12 +22,10 @@ const CategoryChart = ({
 }) => {
   const svgRef = useRef(null);
   const categoryChartRef = useRef();
-  const tooltipRef = useRef();
   const dimensions = useResizeObserver(categoryChartRef);
   const resize = useDebounce(dimensions, 200);
   useEffect(() => {
     const svg = select(svgRef.current);
-    const tooltip = select(tooltipRef.current);
 
     if (!resize) return;
     svg.selectAll(".block").remove();
@@ -151,21 +146,6 @@ const CategoryChart = ({
             const parentData = select(this.parentNode).datum();
             return (parentData.y1 - parentData.y0) / 2 - 7;
           });
-
-        block
-          .append("rect")
-          .classed("blockoverlay", true)
-          .attr("width", (node) => {
-            return node["x1"] - node["x0"];
-          })
-          .attr("height", (node) => {
-            return node["y1"] - node["y0"];
-          })
-          .attr("opacity", 0)
-          .on("mousemove", function (e) {
-            const data = select(e.target).data()[0].data;
-            tooltip.text(`${data.title}\n${data.percentage}%`);
-          });
       });
   }, [data, resize]);
   return (
@@ -174,9 +154,6 @@ const CategoryChart = ({
         <svg ref={svgRef}>
           <g className="blockarea" />
         </svg>
-        <div className="tooltip" ref={tooltipRef}>
-          tooltip!
-        </div>
       </ChartWrapper>
     </>
   );

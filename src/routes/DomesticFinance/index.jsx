@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from "react";
+import React, { useReducer, useMemo, useState } from "react";
 import KeywordChart from "@components/KeywordChart";
 import CategoryChart from "@components/CategoryChart";
 import PressChart from "@components/pressChart";
@@ -23,28 +23,47 @@ import {
 } from "./style";
 import { getPreviousDate } from "@utils/getPreviousDate";
 import FinanceChart from "@components/financeChart";
-import CardsList from "@components/Cards";
+import CardsList from "@components/CardsList";
 import useInput from "@utils/useInput";
 import period_active from "@images/period_active.svg";
 import period_unactive from "@images/period_unactive.svg";
+import emotion_info from "@images/emotion_info.svg";
+import mouse from "@images/mouse.svg";
 import ComparisonCardsList from "@components/ComparisonCardsList";
 import { timeFormat } from "d3";
 import chart_description from "@images/chart_description.svg";
-const publicDate = new Date("2021-08-01");
+import Modal from "@components/Modal";
+import NewsList from "@components/NewsList";
 
 const DomesticStock = () => {
+  const publicDate = useMemo(() => new Date("2021-08-01"), []);
   const [domesticState, dispatch] = useReducer(
     reducer,
     initialState(publicDate),
   );
 
-  const { period, periodError, today, stockData } = domesticState;
-  console.log(domesticState);
+  const {
+    period,
+    periodError,
+    today,
+    stockData,
+    financialDatas,
+    emotionDatas,
+    buzzDatas,
+    keywordDatas,
+    categoryDatas,
+    pressDatas,
+    newsDatas,
+    title,
+  } = domesticState;
+
   const { startDate, endDate, diff } = period;
 
   const [curStartDate, onChangeCurStartDate, setCurStartDate] =
     useInput(startDate);
   const [curEndDate, onChangeCurEndDate, setCurEndDate] = useInput(endDate);
+  const [quarterState, setQuarterState] = useState(true);
+  const [openMainChartModal, setOpenMainChartModal] = useState(false);
 
   const onClickPeriodButton = (numOfDates) => {
     const newStartDate = getPreviousDate(endDate, numOfDates);
@@ -66,130 +85,113 @@ const DomesticStock = () => {
     dispatch(setPeriod(curStartDate, curEndDate));
   };
 
-  const keywordData = useRef([
-    { title: "제품", value: 500 },
-    { title: "삼성", value: 700 },
-    { title: "기업", value: 400 },
-    { title: "lg", value: 300 },
-    { title: "수수료", value: 340 },
-    { title: "시장", value: 150 },
-    { title: "가격", value: 130 },
-    { title: "반도체", value: 360 },
-    { title: "갤럭시", value: 800 },
-    { title: "lg전자", value: 200 },
-  ]);
+  const onToggleQuarterButton = () => {
+    setQuarterState((prev) => !prev);
+  };
 
-  const categoryData = useRef([
-    { title: "경제", value: 519 },
-    { title: "세계", value: 123 },
-    { title: "IT/인터넷/통신", value: 101 },
-    { title: "생활", value: 91 },
-    { title: "금융", value: 86 },
-  ]);
+  const onOpenModal = (e) => {
+    e.preventDefault();
+    setOpenMainChartModal(true);
+  };
 
-  const pressData = useRef([
-    {
-      title: "팍스넷",
-      value: 838,
-    },
-    {
-      title: "아이뉴스24",
-      value: 261,
-    },
-    {
-      title: "이투데이",
-      value: 256,
-    },
-    {
-      title: "파이낸셜뉴스",
-      value: 225,
-    },
-    {
-      title: "매일경제",
-      value: 170,
-    },
-  ]);
+  const onCloseModal = (e) => {
+    e.stopPropagation();
+    setOpenMainChartModal(false);
+  };
 
-  const finance1 = useRef([
-    {
-      date: "2021-12-3",
-      values: [
-        { type: "take", value: -42500 },
-        { type: "profit", value: 91200 },
-        { type: "netprofit", value: 31200 },
-      ],
-    },
-    {
-      date: "2021-12-3",
-      values: [
-        { type: "assets", value: -42500 },
-        { type: "dept", value: 91200 },
-        { type: "capital", value: 31200 },
-      ],
-    },
-    {
-      date: "2021-9",
-      values: [
-        { type: "sales", value: -42500 },
-        { type: "investment", value: 91200 },
-        { type: "finance", value: 31200 },
-      ],
-    },
-  ]);
+  const filteredStockData = useMemo(
+    () =>
+      stockData.filter((ele) => ele.date <= endDate && ele.date >= startDate),
+    [startDate, endDate, stockData],
+  );
 
-  const finance2 = useRef([
-    {
-      date: "2021-9-3",
-      values: [
-        { type: "take", value: -42500 },
-        { type: "profit", value: 91200 },
-        { type: "netprofit", value: 31200 },
-      ],
-    },
-    {
-      date: "2021-09-1",
-      values: [
-        { type: "assets", value: -42500 },
-        { type: "dept", value: 91200 },
-        { type: "capital", value: 31200 },
-      ],
-    },
-    {
-      date: "2021-9",
-      values: [
-        { type: "sales", value: -42500 },
-        { type: "investment", value: 91200 },
-        { type: "finance", value: 31200 },
-      ],
-    },
-  ]);
+  const filteredBuzzData = useMemo(
+    () =>
+      buzzDatas.filter((ele) => ele.date <= endDate && ele.date >= startDate),
+    [startDate, endDate, stockData],
+  );
 
-  const finance3 = useRef([
-    {
-      date: "2021-6-3",
-      values: [
-        { type: "take", value: -42500 },
-        { type: "profit", value: 91200 },
-        { type: "netprofit", value: 31200 },
-      ],
-    },
-    {
-      date: "2021-6-1",
-      values: [
-        { type: "assets", value: -42500 },
-        { type: "dept", value: 91200 },
-        { type: "capital", value: 31200 },
-      ],
-    },
-    {
-      date: "2021-6",
-      values: [
-        { type: "sales", value: -42500 },
-        { type: "investment", value: 91200 },
-        { type: "finance", value: 31200 },
-      ],
-    },
-  ]);
+  const filteredNewsData = useMemo(
+    () =>
+      newsDatas.filter((ele) => ele.date <= endDate && ele.date >= startDate),
+    [startDate, endDate, newsDatas],
+  );
+
+  const filteredEmotionData = useMemo(
+    () =>
+      emotionDatas.filter(
+        (ele) => ele.date <= endDate && ele.date >= startDate,
+      ),
+    [startDate, endDate, emotionDatas],
+  );
+
+  const emotionGap = useMemo(() => {
+    return {
+      type:
+        filteredEmotionData[0].value >
+        filteredEmotionData[filteredEmotionData.length - 1].value
+          ? "negative"
+          : "positive",
+      value: Math.abs(
+        filteredEmotionData[0].value -
+          filteredEmotionData[filteredEmotionData.length - 1].value,
+      ),
+    };
+  }, [filteredEmotionData]);
+
+  const emotionRate = useMemo(() => {
+    let positive = 0;
+    let negative = 0;
+    filteredEmotionData.map((ele) => {
+      ele.value >= 0 ? positive++ : negative++;
+    });
+    return positive >= negative
+      ? {
+          type: "positive",
+          value: Math.floor((positive / (positive + negative)) * 100),
+        }
+      : {
+          type: "negative",
+          value: Math.floor((negative / (positive + negative)) * 100),
+        };
+  }, [filteredEmotionData]);
+
+  const highestDate = useMemo(() => {
+    let max = 0;
+    filteredEmotionData.map((ele, index) => {
+      if (ele.value > filteredEmotionData[max].value) {
+        max = index;
+      }
+    });
+
+    return timeFormat("%Y-%m-%d")(filteredEmotionData[max].date);
+  }, [filteredEmotionData]);
+
+  const lowestDate = useMemo(() => {
+    let min = 0;
+    filteredEmotionData.map((ele, index) => {
+      if (ele.value < filteredEmotionData[min].value) {
+        min = index;
+      }
+    });
+    return timeFormat("%Y-%m-%d")(filteredEmotionData[min].date);
+  }, [filteredEmotionData]);
+
+  const mergedFinancialDatas = useMemo(() => {
+    const copy = JSON.parse(JSON.stringify(financialDatas));
+    return copy.map((datas) => {
+      return datas.reduce((acc, data, idx) => {
+        if (idx === 0) {
+          return { ...data, date: `${new Date(data.date).getFullYear()}` };
+        } else {
+          acc.values.map((ele, index) => {
+            ele.value = ele.value + data.values[index].value;
+          });
+          return acc;
+        }
+      }, {});
+    });
+  }, [financialDatas]);
 
   return (
     <main>
@@ -260,26 +262,83 @@ const DomesticStock = () => {
         </ErrorMessageWrapper>
       )}
       <ContentsWrapper>
-        <CardsList startDate={curStartDate} endDate={curEndDate} />
+        <CardsList
+          title={title}
+          numOfNews={filteredNewsData.length}
+          startDate={curStartDate}
+          endDate={curEndDate}
+          highestDate={highestDate}
+          emotionRate={emotionRate}
+          lowestDate={lowestDate}
+          emotionGap={emotionGap}
+        />
         <div className="level1-wrapper">
           <div className="level1-chart-wrapper">
             <div className="level1-main-chart-wrapper">
               <div className="main-chart-wrapper">
                 <div className="main-title">
                   주식차트
-                  <img className="title-emoji" src={chart_description} />
+                  <div className="title-emoji">
+                    <img
+                      className="info-emoji"
+                      src={chart_description}
+                      onClick={onOpenModal}
+                    />
+                    <Modal
+                      isOpen={openMainChartModal}
+                      onCloseModal={onCloseModal}>
+                      <div className="main-chart-modal">
+                        <div className="modal-content">
+                          <div>
+                            <div className="modal-title">주식차트</div>
+                            <div className="content">
+                              검색한 종목/티커에 대한 기간내 주식차트를
+                              보여줍니다.
+                            </div>
+                          </div>
+                          <div>
+                            <div className="title">버즈량</div>
+                            <div className="content">
+                              검색한 종목/티커에 대한 기간내 관련 뉴스 수집량에
+                              대한 그래프입니다.
+                            </div>
+                          </div>
+                          <div>
+                            <div className="title">감성지수</div>
+                            <img src={emotion_info} alt="emotion_info" />
+                            <div className="content">
+                              검색한 종목/티커에 대한 기간내 수집된 뉴스에서
+                              단어를 분석하여 뉴스의 긍정과 부정을 판단하는
+                              그래프입니다. 해당 날짜 값이 양수에 가까울 수록
+                              긍정, 음수값에 가까울수록 부정적인 뉴스의 비율이
+                              높다는 것을 확인할 수 있습니다.
+                            </div>
+                          </div>
+                          <div className="click-graph">
+                            <div>CLICK!</div>
+                            <img src={mouse} alt="mouse" />
+                            <div className="click-desription">
+                              그래프를 눌러서
+                              <br />
+                              뉴스를 확인해 보세요
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
+                  </div>
                 </div>
                 {diff < 91 && startDate && endDate ? (
                   <MainChart
                     startDate={startDate}
                     endDate={endDate}
-                    stockData={stockData}
+                    data={filteredStockData}
                   />
                 ) : (
                   <MainAreaChart
                     startDate={startDate}
                     endDate={endDate}
-                    stockData={stockData}
+                    data={filteredStockData}
                   />
                 )}
               </div>
@@ -290,14 +349,14 @@ const DomesticStock = () => {
                 <img className="title-emoji" src={chart_description} />
               </div>
               <div className="buzz-chart-wrapper">
-                <BuzzChart />
+                <BuzzChart data={filteredBuzzData} />
               </div>
               <div className="emotion-chart-wrapper">
-                <EmotionChart />
+                <EmotionChart data={filteredEmotionData} />
               </div>
             </div>
           </div>
-          <div className="level1-news-list-wrapper">뉴스 리스트</div>
+          <NewsList data={filteredNewsData} />
         </div>
         <div className="level2-chart-wrapper">
           <div className="chart-wrapper">
@@ -305,21 +364,21 @@ const DomesticStock = () => {
               키워드 분석
               <img className="title-emoji" src={chart_description} />
             </div>
-            <KeywordChart data={keywordData.current} />
+            <KeywordChart data={keywordDatas} />
           </div>
           <div className="chart-wrapper">
             <div className="press-title">
               언론사 분석
               <img className="title-emoji" src={chart_description} />
             </div>
-            <PressChart data={pressData.current} />
+            <PressChart data={pressDatas} />
           </div>
           <div className="chart-wrapper">
             <div className="category-title">
               카테고리 분석
               <img className="title-emoji" src={chart_description} />
             </div>
-            <CategoryChart data={categoryData.current} />
+            <CategoryChart data={categoryDatas} />
           </div>
         </div>
         <div className="finances-wrapper">
@@ -329,32 +388,42 @@ const DomesticStock = () => {
               <img className="title-emoji" src={chart_description} />
             </div>
             <div className="finances-buttons-wrapper">
-              <button className="finances-button">연간실적</button>
-              <button className="finances-button active">분기실적</button>
+              <button
+                className={
+                  quarterState ? "finances-button" : "finances-button active"
+                }
+                onClick={onToggleQuarterButton}>
+                연간실적
+              </button>
+              <button
+                className={
+                  quarterState ? "finances-button active" : "finances-button"
+                }
+                onClick={onToggleQuarterButton}>
+                분기실적
+              </button>
             </div>
           </div>
           <div className="finances-content">
-            <div className="finances-ele">
-              {finance1.current.map((ele, idx) => (
-                <div className="chart-wrapper" key={idx}>
-                  <FinanceChart data={ele} />
+            {quarterState ? (
+              financialDatas.map((quarter, idx) => (
+                <div className="finances-ele" key={idx}>
+                  {quarter.map((ele, index) => (
+                    <div className="chart-wrapper" key={index * 10}>
+                      <FinanceChart data={ele} tooltip={index === 0} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div className="finances-ele">
-              {finance2.current.map((ele, idx) => (
-                <div className="chart-wrapper" key={idx}>
-                  <FinanceChart data={ele} />
-                </div>
-              ))}
-            </div>
-            <div className="finances-ele">
-              {finance3.current.map((ele, idx) => (
-                <div className="chart-wrapper" key={idx}>
-                  <FinanceChart data={ele} />
-                </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <div className="finances-ele annual">
+                {mergedFinancialDatas.map((ele, index) => (
+                  <div className="chart-wrapper" key={index * 10}>
+                    <FinanceChart data={ele} tooltip={true} dateFormat="%Y" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </ContentsWrapper>

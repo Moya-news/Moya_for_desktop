@@ -17,19 +17,9 @@ import { EmotionWrapper } from "./style";
 import useDebounce from "@utils/useDebounce";
 import { ticks } from "d3";
 
-const data = [
-  { date: new Date("2018-01-01"), value: 1 },
-  { date: new Date("2018-01-02"), value: 2 },
-  { date: new Date("2018-01-03"), value: 3 },
-  { date: new Date("2018-01-04"), value: 2 },
-  { date: new Date("2018-01-05"), value: 3 },
-  { date: new Date("2018-01-06"), value: 4 },
-  { date: new Date("2018-01-07"), value: 3 },
-  { date: new Date("2018-01-08"), value: 5 },
-];
-
 const EmotionChart = ({
   width = 500,
+  data,
   height = 300,
   marginTop = 40,
   marginBottom = 40,
@@ -76,8 +66,8 @@ const EmotionChart = ({
       .call((g) => g.selectAll(".tick line").remove())
       .style("transform", `translateY(${height - marginBottom}px)`);
 
-    const yMin = min(data, (data) => data.value);
-    const yMax = max(data, (data) => data.value);
+    const yMin = min(data, (data) => data.value) * 1.2;
+    const yMax = max(data, (data) => data.value) * 1.2;
 
     const maxValue =
       Math.abs(yMin) > Math.abs(yMax) ? Math.abs(yMin) : Math.abs(yMax);

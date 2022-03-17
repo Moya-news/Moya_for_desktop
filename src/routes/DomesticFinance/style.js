@@ -80,12 +80,13 @@ export const ContentsWrapper = styled.div`
     flex-direction: column;
     background: #ffffff;
     border-radius: 12px;
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
   }
 
   & .main-title {
     display: flex;
     align-items: center;
-    padding: 20px 72px 0px 72px;
+    padding: 28px 72px 0px 72px;
     font-size: 18px;
     font-weight: bold;
   }
@@ -122,16 +123,18 @@ export const ContentsWrapper = styled.div`
     font-weight: bold;
   }
 
-  & > .level1-wrapper > .level1-chart-wrapper {
+  & .level1-chart-wrapper {
     flex: 1 1 0;
     margin-right: 10px;
     box-sizing: boder-box;
     display: flex;
     flex-direction: column;
   }
-  & > .level1-wrapper > .level1-chart-wrapper > .level1-main-chart-wrapper {
+  & .level1-main-chart-wrapper {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     box-sizing: border-box;
     min-height: 389px;
+    position: relative;
     background: #ffffff;
     border-radius: 12px;
     display: flex;
@@ -139,18 +142,63 @@ export const ContentsWrapper = styled.div`
     margin-bottom: 20px;
   }
 
-  &
-    > .level1-wrapper
-    > .level1-chart-wrapper
-    > .level1-main-chart-wrapper
-    > .main-chart-title {
+  & .main-chart-modal {
+    position: absolute;
+    z-index: 1000;
+    width: 288px;
+    height: 500px;
+    top: 63;
+    left: 72;
+    background: #ffffff;
+    border-radius: 8px;
+  }
+
+  & .main-chart-modal .modal-content {
+    padding: 38px 28px 28px 28px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 16px;
+    color: #767676;
+  }
+
+  & .modal-content .content {
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  & .modal-content .click-graph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #286f6c;
+    font-weight: 400;
+    font-size: 11px;
+  }
+
+  & .modal-content .click-graph img {
+    margin: 8px 0;
+  }
+
+  & .modal-content .click-graph .click-desription {
+    text-align: center;
+    font-weight: 500;
+    font-size: 12px;
+    text-decoration-line: underline;
+  }
+
+  & .main-chart-title {
     font-weight: 500;
     font-size: 18px;
     margin-left: 40px;
     line-height: 26px;
   }
 
-  & > .level1-wrapper > .level1-chart-wrapper > .level1-moya-chart-wrapper {
+  & .level1-moya-chart-wrapper {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     flex: 1 1 0;
     display: flex;
     flex-direction: column;
@@ -160,33 +208,28 @@ export const ContentsWrapper = styled.div`
     border-radius: 12px;
   }
 
-  &
-    > .level1-wrapper
-    > .level1-chart-wrapper
-    > .level1-moya-chart-wrapper
-    > .buzz-chart-wrapper {
+  & .buzz-chart-wrapper {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     box-sizing: border-box;
     max-height: 50%;
   }
-  &
-    > .level1-wrapper
-    > .level1-chart-wrapper
-    > .level1-moya-chart-wrapper
-    > .emotion-chart-wrapper {
+  & .emotion-chart-wrapper {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     box-sizing: border-box;
     max-height: 50%;
   }
 
-  & > .level1-wrapper > .level1-news-list-wrapper {
+  & .level1-news-list-wrapper {
     flex: 1 1 0;
-    min-height: 846px;
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
+    max-height: 846px;
     margin-left: 10px;
     box-sizing: boder-box;
     background: #ffffff;
     border-radius: 12px;
   }
 
-  & > .level2-chart-wrapper {
+  & .level2-chart-wrapper {
     display: flex;
     margin: 20px 0;
     justify-content: space-between;
@@ -196,6 +239,7 @@ export const ContentsWrapper = styled.div`
     margin: 0 20px;
   }
   & .finances-wrapper {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     width: 100%;
     background: #fff;
     box-sizing: border-box;
@@ -243,17 +287,26 @@ export const ContentsWrapper = styled.div`
   & .finances-ele {
     display: flex;
     width: 100%;
-    flex-direction: column;
     justify-content: center;
-    border-bottom: 1px solid #e4e4e4;
+    flex-direction: column;
+  }
+
+  & .finances-ele.annual {
+    flex-direction: row;
   }
   & .finances-ele .chart-wrapper {
     min-height: auto;
-    border-radius: none;
+    border-radius: 0;
     background: none;
+    border-bottom: 1px solid #e4e4e4;
+    box-shadow: none;
   }
   & .title-emoji {
     margin-left: 12px;
+  }
+
+  & .info-emoji {
+    cursor: pointer;
   }
 `;
 
@@ -262,6 +315,7 @@ export const FooterWrapper = styled.div`
   flex-direction: column;
 
   & .footer-comparison {
+    box-shadow: 4px 0px 16px rgba(0, 14, 72, 0.04);
     width: 100%;
     background: #ffffff;
     min-height: 164px;

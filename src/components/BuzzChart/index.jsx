@@ -18,23 +18,13 @@ import { BuzzWrapper } from "./style";
 import useDebounce from "@utils/useDebounce";
 import { ticks } from "d3";
 
-const data = [
-  { date: new Date("2018-01-01"), value: 3 },
-  { date: new Date("2018-01-02"), value: 2 },
-  { date: new Date("2018-01-03"), value: 6 },
-  { date: new Date("2018-01-04"), value: 2 },
-  { date: new Date("2018-01-05"), value: 2 },
-  { date: new Date("2018-01-06"), value: 1 },
-  { date: new Date("2018-01-07"), value: 3 },
-  { date: new Date("2018-01-08"), value: 5 },
-];
-
 const BuzzChart = ({
   width = 500,
   height = 300,
   marginTop = 40,
   marginBottom = 40,
   marginLeft = 40,
+  data,
   marginRight = 40,
   padding = 0,
 }) => {
@@ -74,7 +64,7 @@ const BuzzChart = ({
       .call((g) => g.selectAll(".tick line").remove())
       .style("transform", `translateY(${height - marginBottom}px)`);
 
-    const maxValue = max(data, (data) => data.value);
+    const maxValue = max(data, (data) => data.value) * 1.2;
 
     const yScale = scaleLinear()
       .domain([0, maxValue])
