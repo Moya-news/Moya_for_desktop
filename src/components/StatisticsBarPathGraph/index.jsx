@@ -4,18 +4,14 @@ import {
   axisBottom,
   extent,
   max,
-  min,
   scaleLinear,
   scaleBand,
   scaleTime,
   select,
   line,
   axisRight,
-  axisLeft,
-  timeFormat,
 } from "d3";
 import useResizeObserver from "@utils/useResizeObserver";
-import { ticks } from "d3";
 
 const StatisticsGraph = ({ data, unit, type }) => {
   const graphRef = useRef();
@@ -106,7 +102,7 @@ const StatisticsGraph = ({ data, unit, type }) => {
     svg.attr("width", resizeWidth).attr("height", 300);
 
     const xBandScale = scaleBand()
-      .domain(yearly.map((value, idx) => idx))
+      .domain(yearly.map((_, idx) => idx))
       .range([margin.left + innerPadding, width - margin.right - innerPadding])
       .paddingInner(0.5);
 
@@ -124,7 +120,7 @@ const StatisticsGraph = ({ data, unit, type }) => {
         width - margin.right - innerPadding - xBandScale.bandwidth() / 2,
       ]);
     const xAxisDate = axisBottom(xScaleDate).tickFormat(
-      (value, index) => yearly[index].basDt,
+      (_, index) => yearly[index].basDt,
     );
 
     const xBandAxis = axisBottom(xScale).tickFormat((node, i) => yearly[node]);
