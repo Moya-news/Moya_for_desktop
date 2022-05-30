@@ -6,6 +6,7 @@ const webpack = require("webpack");
 // require("@babel/polyfill");
 
 module.exports = {
+  mode: "development",
   entry: "./src/index.js",
   //진입점이 될 파일
   output: {
